@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>2026 Startup Funding Directory</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 13px; background: #ffffff; color: #1f2328; line-height: 1.5; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 20px; }
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .controls input { padding: 7px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; width: 280px; outline: none; }
+  .controls input:focus { border-color: #3b82d4; }
+  .controls select { padding: 7px 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; background: #fff; outline: none; cursor: pointer; }
+  .count { color: #57606a; font-size: 12px; margin-left: auto; }
+  .table-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  thead th { background: #f7f8fa; border-bottom: 1px solid #e5e7eb; padding: 9px 10px; text-align: left; font-weight: 600; color: #1f2328; position: sticky; top: 0; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #f0f1f3; }
+  tbody tr:hover { background: #f7f8fa; }
+  td { padding: 8px 10px; vertical-align: top; }
+  .num { color: #aaa; font-size: 11px; }
+  .company { font-weight: 600; white-space: nowrap; }
+  .oneliner { color: #444d56; max-width: 320px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .d-ai { background:#e0f0ff;color:#1a6fb0; }
+  .d-fintech { background:#e6faf0;color:#1a7a4a; }
+  .d-health { background:#fff0f5;color:#b0193a; }
+  .d-infra { background:#f3f0ff;color:#5e35b1; }
+  .d-robotics { background:#fff8e1;color:#8a6000; }
+  .d-security { background:#fff3e0;color:#c55a00; }
+  .d-climate { background:#e8f5e9;color:#2e7d32; }
+  .d-dev { background:#e8f4ff;color:#0a5a9c; }
+  .d-consumer { background:#fce4ec;color:#ad1457; }
+  .d-crypto { background:#ede7f6;color:#4527a0; }
+  .d-data { background:#e3f2fd;color:#0d47a1; }
+  .d-hr { background:#f9fbe7;color:#558b2f; }
+  .d-legal { background:#fdf3e3;color:#8d5524; }
+  .d-bio { background:#e8faf0;color:#1b5e20; }
+  .d-compute { background:#f3e5f5;color:#4a148c; }
+  .round-badge { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap; }
+  .r-seed { background:#fff8e1;color:#b45309; }
+  .r-pre { background:#fdf2f8;color:#9d174d; }
+  .r-a { background:#eff6ff;color:#1d4ed8; }
+  .r-b { background:#ecfdf5;color:#065f46; }
+  .r-c { background:#fff7ed;color:#c2410c; }
+  .r-d { background:#f5f3ff;color:#5b21b6; }
+  .r-e { background:#fef2f2;color:#991b1b; }
+  .r-v { background:#f0f9ff;color:#0369a1; }
+  .amount { font-weight: 600; white-space: nowrap; }
+  .date { color:#57606a;white-space:nowrap;font-size:11.5px; }
+  footer { text-align:center;margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;color:#57606a;font-size:12px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>2026 Startup Funding Directory</h1>
+  <p class="subtitle">210 early-stage startups funded Jan–Aug 2026 · Sorted newest first</p>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search company, description, or domain…" oninput="filter()"/>
+    <select id="domainSel" onchange="filter()">
+      <option value="">All Domains</option>
+      <option>AI / ML</option><option>Dev Tools</option><option>FinTech</option>
+      <option>Health</option><option>Infrastructure</option><option>Robotics</option>
+      <option>Security</option><option>Climate / Energy</option><option>Crypto / Web3</option>
+      <option>Data</option><option>HR / Recruiting</option><option>Legal</option>
+      <option>Biotech</option><option>Compute / Hardware</option><option>Consumer</option>
+    </select>
+    <select id="roundSel" onchange="filter()">
+      <option value="">All Rounds</option>
+      <option>Pre-Seed</option><option>Seed</option><option>Series A</option>
+      <option>Series B</option><option>Series C</option><option>Series D</option>
+      <option>Series E</option><option>Venture</option>
+    </select>
+    <span class="count" id="cnt">210 companies</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Company</th><th>What They Do</th>
+          <th>Domain</th><th>Amount</th><th>Round</th><th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <footer>Made with IBM Bob</footer>
+</div>
+<script>
+const D=[
+["Naïve","AI-native browser for research and knowledge work","AI / ML","$28.5M","Series A","Aug 6, 2026"],
+["Osmo Studio","Creative tools for digital artists and designers","Consumer","$5M","Seed","Aug 5, 2026"],
+["Decade","Long-term investment platform for individuals","FinTech","$85M","Seed","Aug 4, 2026"],
+["Convex","Backend-as-a-service with real-time database sync","Dev Tools","$57M","Series B","Aug 4, 2026"],
+["HappyRobot","AI voice agents for freight and logistics operations","AI / ML","$150M","Series C","Aug 4, 2026"],
+["Ambrook","Financial management software for farmers","FinTech","$30M","Series B","Aug 4, 2026"],
+["Base","Banking and financial infrastructure for businesses","FinTech","$1B","Series D","Aug 3, 2026"],
+["Valar Atomics","Advanced nuclear energy development","Climate / Energy","$1B","Series B","Aug 3, 2026"],
+["Function Health","Comprehensive lab testing and preventive health monitoring","Health","$450M","Series C","Jul 31, 2026"],
+["Simile","AI-powered data analytics and business intelligence","AI / ML","$200M","Series B","Jul 30, 2026"],
+["Onyx Security","Identity security and access management platform","Security","$113M","Series B","Jul 29, 2026"],
+["Henry","Personal finance and wealth management app","FinTech","$16.5M","Series A","Jul 29, 2026"],
+["Town","Community-first local social networking platform","Consumer","$55M","Series A","Jul 29, 2026"],
+["Throne","Creator monetization and wishlist platform","Consumer","$10M","Series A","Jul 28, 2026"],
+["Fish Audio","AI voice cloning and audio generation platform","AI / ML","$52M","Seed","Jul 28, 2026"],
+["Sent","Cross-border messaging and payments infrastructure","FinTech","$12M","Series A","Jul 28, 2026"],
+["telli","AI phone agents for customer service automation","AI / ML","$15M","Seed","Jul 28, 2026"],
+["Enigma","AI foundation model for scientific discovery","AI / ML","$71M","Seed","Jul 27, 2026"],
+["Antares","Decentralized compute infrastructure for AI workloads","Compute / Hardware","$470M","Series C","Jul 27, 2026"],
+["Andera","Healthcare data interoperability and AI platform","Health","$37M","Series A","Jul 24, 2026"],
+["Aegis AI","AI-powered defense and national security tools","Security","$36M","Series A","Jul 23, 2026"],
+["Paper","Academic tutoring and student support platform","Consumer","$34M","Series A","Jul 23, 2026"],
+["Etched","Custom AI inference chips (transformers-only silicon)","Compute / Hardware","$300M","Series C","Jul 23, 2026"],
+["Candid Health","Healthcare revenue cycle automation for providers","Health","$120M","Series D","Jul 22, 2026"],
+["Atoms","AI agents for enterprise knowledge management","AI / ML","$1.7B","Venture","Jul 22, 2026"],
+["Passionfroot","Creator business management and brand deal platform","Consumer","$15M","Series A","Jul 22, 2026"],
+["Humanoid","General-purpose humanoid robotics","Robotics","$152M","Series A","Jul 22, 2026"],
+["CuspAI","AI platform for accelerating materials discovery","AI / ML","$450M","Series B","Jul 21, 2026"],
+["Natural","AI-powered consumer brand building platform","Consumer","$30M","Series A","Jul 20, 2026"],
+["EverSettled","Digital estate planning and end-of-life document management","Legal","$5M","Seed","Jul 16, 2026"],
+["Sable","Neobank and financial services for immigrants","FinTech","$45M","Series A","Jul 16, 2026"],
+["Fora","Travel agency management and booking platform","Consumer","$60M","Series D","Jul 16, 2026"],
+["Monumental","Autonomous bricklaying and construction robotics","Robotics","$32M","Series B","Jul 15, 2026"],
+["Neko","AI-powered preventive health and longevity clinic","Health","$700M","Series C","Jul 15, 2026"],
+["Senra Systems","Grid-scale energy storage systems","Climate / Energy","$65M","Series B","Jul 15, 2026"],
+["Oak","AI infrastructure and compute platform","Infrastructure","$60M","Seed","Jul 15, 2026"],
+["InstaLILY AI","AI marketing automation for e-commerce","AI / ML","$60M","Series B","Jul 14, 2026"],
+["Flex","Rent payment flexibility and financial wellness for renters","FinTech","$70M","Series B","Jul 14, 2026"],
+["TerraFirma","Geospatial data intelligence and land analytics","Data","$100M","Series A","Jul 14, 2026"],
+["Chai Discovery","AI-driven protein and drug discovery platform","Biotech","$400M","Series C","Jul 14, 2026"],
+["Auger","AI-powered legal document review and contract analysis","Legal","$50M","Series B","Jul 9, 2026"],
+["Ollama","Local large language model deployment and inference","Dev Tools","$65M","Series B","Jul 9, 2026"],
+["Prime Intellect","Decentralized AI training infrastructure","Infrastructure","$130M","Series A","Jul 8, 2026"],
+["Monogram","Custom mechanical keyboards and input devices","Consumer","$40M","Seed","Jul 7, 2026"],
+["Norm AI","AI platform for regulatory compliance automation","AI / ML","$120M","Series C","Jul 7, 2026"],
+["Bespoke Labs","Data curation and evaluation tools for AI models","AI / ML","$40M","Series A","Jul 6, 2026"],
+["a1mobile","Mobile-first fintech for emerging markets","FinTech","$11.5M","Seed","Jul 4, 2026"],
+["Together AI","Cloud platform for running open-source AI models","Infrastructure","$800M","Series C","Jul 1, 2026"],
+["TwelveLabs","Multimodal video understanding and search API","AI / ML","$100M","Series B","Jul 1, 2026"],
+["Apothékary","Adaptogen-based herbal wellness and supplement brand","Consumer","$16M","Series A","Jun 30, 2026"],
+["Taxwire","Tax compliance and filing automation platform","FinTech","$25M","Series A","Jun 30, 2026"],
+["Ornn","AI coding agent for software development teams","Dev Tools","$33M","Seed","Jun 26, 2026"],
+["Hera","Women's health and fertility tracking platform","Health","$27M","Series A","Jun 25, 2026"],
+["General Intuition","Foundation AI models for enterprise reasoning","AI / ML","$320M","Series A","Jun 25, 2026"],
+["Warp (HR)","Global payroll and HR compliance platform","HR / Recruiting","$60M","Series B","Jun 25, 2026"],
+["RunPod","GPU cloud for AI training and inference workloads","Infrastructure","$100M","Series A","Jun 25, 2026"],
+["Attention","AI meeting assistant and CRM auto-fill tool","AI / ML","$30M","Series B","Jun 24, 2026"],
+["Redo","E-commerce returns and post-purchase experience platform","Consumer","$81M","Series B","Jun 24, 2026"],
+["Runlayer","AI infrastructure orchestration for developers","Infrastructure","$30M","Series A","Jun 24, 2026"],
+["Taktile","Automated credit and risk decision platform for fintechs","FinTech","$110M","Series C","Jun 24, 2026"],
+["Assort Health","AI phone agents for healthcare patient intake","Health","$120M","Series C","Jun 24, 2026"],
+["Engram","AI-native memory and knowledge base for teams","AI / ML","$98M","Seed","Jun 23, 2026"],
+["Partly","Parts catalog and supply chain for automotive repair","Consumer","$50M","Series B","Jun 23, 2026"],
+["Prosper AI","AI financial advisor for personal wealth planning","FinTech","$30M","Series A","Jun 22, 2026"],
+["Isometric","Carbon credit verification and monitoring platform","Climate / Energy","$40M","Series A","Jun 22, 2026"],
+["Gradial","AI-powered brand asset management and marketing ops","AI / ML","$65M","Series C","Jun 19, 2026"],
+["Ploy","Loyalty and rewards infrastructure for businesses","FinTech","$27M","Seed","Jun 17, 2026"],
+["Odyssey","Decentralized content and media distribution network","Crypto / Web3","$310","Series B","Jun 17, 2026"],
+["Conduct","Compliance monitoring and oversight for financial firms","Security","$60M","Series A","Jun 17, 2026"],
+["Taste Labs","AI-driven personalized food and recipe discovery","Consumer","$18.5M","Seed","Jun 16, 2026"],
+["Bland","AI phone call platform for enterprise automation","AI / ML","$50M","Series C","Jun 16, 2026"],
+["Nox Metals","Critical minerals extraction and processing","Climate / Energy","$11.5M","Seed","Jun 15, 2026"],
+["Niteshift","AI security monitoring for cloud infrastructure","Security","$7M","Seed","Jun 10, 2026"],
+["TensorWave","AMD-based GPU cloud for AI model training","Infrastructure","$300M","Series B","Jun 10, 2026"],
+["Sandstone","Embedded insurance infrastructure for platforms","FinTech","$30M","Series A","Jun 9, 2026"],
+["PhysicsX","AI simulation platform for engineering and product design","AI / ML","$300M","Series C","Jun 8, 2026"],
+["Opal Security","Identity and access governance for cloud environments","Security","$23M","Venture","Jun 5, 2026"],
+["Generalist AI","General-purpose AI research and model development","AI / ML","$400M","Venture","Jun 4, 2026"],
+["Collate","AI-powered data governance and cataloging platform","Data","$95M","Series A","Jun 3, 2026"],
+["Suno","AI music generation platform","Consumer","$400M","Series D","Jun 3, 2026"],
+["NewLimit","Epigenetic reprogramming for human longevity","Biotech","$435M","Series C","Jun 2, 2026"],
+["Board","AI-powered board management and governance software","AI / ML","$20M","Series A","Jun 2, 2026"],
+["Endra","Non-invasive metabolic health monitoring device","Health","$50M","Series A","Jun 2, 2026"],
+["Mecka","Web3 gaming and on-chain gaming infrastructure","Crypto / Web3","$60M","Series A","Jun 2, 2026"],
+["Inherent","AI trust and safety infrastructure for LLM applications","Security","$50M","Seed","May 30, 2026"],
+["Drafted","AI recruiting assistant for sourcing and screening","HR / Recruiting","$16M","Seed","May 29, 2026"],
+["Trajectory","AI agent framework for automating business workflows","AI / ML","$15M","Seed","May 29, 2026"],
+["Corgi","AI-powered customer support automation platform","AI / ML","$106M","Series B","May 28, 2026"],
+["Cognition","AI software engineer (Devin) for autonomous coding","Dev Tools","$1B","Venture","May 27, 2026"],
+["Pace","Hospitality revenue management and pricing software","Consumer","$46M","Series B","May 27, 2026"],
+["Default","Inbound lead routing and sales pipeline automation","AI / ML","$20M","Series A","May 27, 2026"],
+["Tensormesh","Distributed GPU networking fabric for AI clusters","Compute / Hardware","$20M","Venture","May 27, 2026"],
+["OpenRouter","Unified API gateway for accessing multiple LLMs","Infrastructure","$113M","Series B","May 26, 2026"],
+["Catena Labs","AI-native financial services and stablecoin infrastructure","FinTech","$30M","Series A","May 26, 2026"],
+["Exa","AI-powered semantic web search API","AI / ML","$250M","Series C","May 22, 2026"],
+["Hark","AI-driven customer feedback and voice-of-customer platform","AI / ML","$700M","Series A","May 21, 2026"],
+["Modal","Serverless cloud platform for AI and ML workloads","Infrastructure","$355M","Series C","May 21, 2026"],
+["Mercury","Business banking and financial tools for startups","FinTech","$200M","Series D","May 21, 2026"],
+["Pivot","Carbon accounting and sustainability management for enterprises","Climate / Energy","$40M","Series B","May 21, 2026"],
+["Socket","Software supply chain security for open-source dependencies","Security","$60M","Series C","May 20, 2026"],
+["Quartermaster","Procurement automation and vendor management platform","FinTech","$43M","Series A","May 20, 2026"],
+["Decart","Real-time interactive AI world simulation","AI / ML","$300M","Venture","May 20, 2026"],
+["Primer","AI-powered intelligence analysis for government and defense","Security","$100M","Series C","May 20, 2026"],
+["Ocean","Decentralized data marketplace for AI training data","Crypto / Web3","$20M","Series A","May 19, 2026"],
+["Moment","Financial infrastructure and treasury management for businesses","FinTech","$78M","Series C","May 19, 2026"],
+["Nourish","Telenutrition platform connecting patients with dietitians","Health","$100M","Series C","May 19, 2026"],
+["Bunch","AI executive coach and leadership development app","Consumer","$35M","Series B","May 19, 2026"],
+["Armada","Edge computing and connectivity for remote environments","Infrastructure","$230M","Series B","May 19, 2026"],
+["Dust","AI assistant and workflow automation for enterprise teams","AI / ML","$40M","Series B","May 18, 2026"],
+["Roadrunner","AI-powered last-mile delivery optimization","AI / ML","$22M","Series A","May 18, 2026"],
+["Optura","AI field inspection and documentation for infrastructure","AI / ML","$17.5M","Series A","May 14, 2026"],
+["Judgment Labs","LLM evaluation and quality benchmarking platform","AI / ML","$32M","Series A","May 12, 2026"],
+["Monaco","AI-powered tax preparation and filing platform","FinTech","$50M","Series B","May 12, 2026"],
+["Forus","AI-driven physical therapy and musculoskeletal care","Health","$160M","Series B","May 12, 2026"],
+["Vapi","Voice AI API for building phone-based AI applications","AI / ML","$50M","Series B","May 12, 2026"],
+["Adfin","Accounts receivable and payment collection automation","FinTech","$18M","Series A","May 12, 2026"],
+["Cowboy Space","Commercial space infrastructure and satellite services","Infrastructure","$275M","Series B","May 11, 2026"],
+["Davis","AI-powered agriculture monitoring and crop analytics","AI / ML","$5.5M","Pre-Seed","May 7, 2026"],
+["Vellum","LLM prompt management and production AI workflow platform","Dev Tools","$25M","Series A","May 7, 2026"],
+["Ethos","AI-powered estate planning and will creation","Legal","$22.75M","Series A","May 6, 2026"],
+["Corgi","AI-powered enterprise knowledge and support automation","AI / ML","$160M","Series B","May 6, 2026"],
+["Lithosquare","Direct lithium extraction technology","Climate / Energy","$25M","Seed","May 5, 2026"],
+["Nace AI","AI agent for enterprise sales and go-to-market","AI / ML","$21.5M","Seed","May 5, 2026"],
+["Sierra","Conversational AI platform for customer service","AI / ML","$950M","Venture","May 4, 2026"],
+["Fun","Web3 gaming and consumer crypto applications","Crypto / Web3","$72M","Series A","May 1, 2026"],
+["Standard Intelligence","AI reasoning models for enterprise applications","AI / ML","$75M","Series A","Apr 30, 2026"],
+["Casa","Bitcoin self-custody and multi-key security platform","Crypto / Web3","$27M","Series A","Apr 30, 2026"],
+["Actively","Youth sports management and registration platform","Consumer","$45M","Series B","Apr 29, 2026"],
+["Hightouch","Reverse ETL and customer data activation platform","Data","$150M","Series D","Apr 29, 2026"],
+["Rogo","AI-powered financial research and analyst automation","FinTech","$160M","Series D","Apr 29, 2026"],
+["Parallel","AI tutoring and personalized learning for K-12 students","Consumer","$100M","Series B","Apr 29, 2026"],
+["Manifest OS","AI operating system for field service and operations teams","AI / ML","$60M","Series A","Apr 28, 2026"],
+["Golden Child","AI-powered children's education and learning app","Consumer","$25M","Series A","Apr 28, 2026"],
+["Ineffable Intelligence","Frontier AI research and model development","AI / ML","$1B","Seed","Apr 27, 2026"],
+["Comfy","Generative AI-powered UI/UX design tool","Dev Tools","$30M","Series A","Apr 27, 2026"],
+["Omni","AI-powered finance and accounting automation","FinTech","$120M","Series C","Apr 23, 2026"],
+["Sooth Labs","AI reasoning and decision intelligence platform","AI / ML","$50M","Seed","Apr 22, 2026"],
+["Blackstar","AI-powered B2B sales intelligence platform","AI / ML","$12M","Seed","Apr 22, 2026"],
+["MindFort","Mental health and emotional resilience platform","Health","$3M","Seed","Apr 21, 2026"],
+["Humble","AI developer tools and code generation platform","Dev Tools","$24M","Seed","Apr 21, 2026"],
+["Monk","AI-powered vehicle inspection and damage assessment","AI / ML","$25M","Series A","Apr 21, 2026"],
+["Ricursive Intelligence","Recursive self-improving AI systems research","AI / ML","$500M","Venture","Apr 18, 2026"],
+["Loop","Returns management and reverse logistics for retailers","Consumer","$95M","Series C","Apr 17, 2026"],
+["Slash","Business banking and spend management for SMBs","FinTech","$100M","Series C","Apr 16, 2026"],
+["Factory","AI software development and autonomous engineering agents","Dev Tools","$150M","Series C","Apr 16, 2026"],
+["Solidroad","AI-powered sales coaching and call simulation platform","AI / ML","$25M","Series A","Apr 16, 2026"],
+["Auctor","AI agent for finance and accounting workflows","FinTech","$20M","Series A","Apr 15, 2026"],
+["Mintlify","AI-powered developer documentation platform","Dev Tools","$45M","Series B","Apr 14, 2026"],
+["Bluefish","B2B marketplace for wholesale consumer goods","Consumer","$43M","Series B","Apr 14, 2026"],
+["Slate","EV battery manufacturing and energy storage","Climate / Energy","$650M","Series C","Apr 13, 2026"],
+["Round Treasury","Treasury management and cash optimization for startups","FinTech","$6M","Seed","Apr 13, 2026"],
+["AfterQuery","AI data analyst for business intelligence and SQL queries","Data","$30M","Series A","Apr 9, 2026"],
+["Mastra","Open-source TypeScript framework for building AI agents","Dev Tools","$22M","Series A","Apr 9, 2026"],
+["Applied Compute","AI infrastructure and GPU cluster deployment","Compute / Hardware","$80M","Venture","Apr 9, 2026"],
+["GitButler","Git branch management and version control UI tool","Dev Tools","$17M","Series A","Apr 8, 2026"],
+["Avec","AI-powered event and occasion planning platform","Consumer","$8.4M","Seed","Apr 8, 2026"],
+["Atlas Card","Corporate card and spend management for startups","FinTech","$40M","Venture","Apr 8, 2026"],
+["Yuzu","AI-powered insurance platform for renters and homeowners","FinTech","$35M","Series A","Apr 7, 2026"],
+["Tasklet","AI task automation and workflow orchestration tool","AI / ML","$20M","Seed","Apr 7, 2026"],
+["Noon","AI-native productivity and work management platform","AI / ML","$44M","Seed","Apr 1, 2026"],
+["Sona","Workforce management platform for frontline workers","HR / Recruiting","$45M","Series B","Apr 1, 2026"],
+["Valar Atomics","Advanced nuclear fission energy development","Climate / Energy","$450M","Venture","Apr 1, 2026"],
+["Crosby","AI-driven climate and weather risk analytics","Climate / Energy","$60M","Series B","Mar 31, 2026"],
+["Treeline","AI agents for enterprise sales prospecting and outreach","AI / ML","$25M","Series A","Mar 31, 2026"],
+["Conductor","Open-source workflow orchestration for microservices","Dev Tools","$22M","Series A","Mar 31, 2026"],
+["depthfirst","AI-native geospatial and subsurface intelligence platform","Data","$80M","Series B","Mar 31, 2026"],
+["Also","AI-powered content creation and marketing platform","AI / ML","$200M","Series C","Mar 31, 2026"],
+["Sycamore","AI infrastructure for reasoning and autonomous agents","Infrastructure","$65M","Seed","Mar 30, 2026"],
+["Starcloud","GPU-as-a-service cloud for AI model training","Infrastructure","$170M","Series A","Mar 30, 2026"],
+["Applied Atomics","Compact nuclear reactor development for clean energy","Climate / Energy","$8.3M","Seed","Mar 26, 2026"],
+["Normal","AI-powered customer support and help desk platform","AI / ML","$50M","Series B","Mar 25, 2026"],
+["Granola","AI meeting notes and transcription tool","AI / ML","$125M","Series C","Mar 25, 2026"],
+["Notch","Embedded financing and BNPL for B2B transactions","FinTech","$30M","Series A","Mar 25, 2026"],
+["Stedi","EDI and B2B data exchange API platform","Infrastructure","$50M","Series C","Mar 24, 2026"],
+["Spade","Transaction data enrichment API for fintechs","FinTech","$40M","Series B","Mar 24, 2026"],
+["Doss","AI-powered ERP and operations management platform","AI / ML","$55M","Series B","Mar 24, 2026"],
+["Shepherd","AI-powered insurance for construction and contractors","FinTech","$42M","Series B","Mar 24, 2026"],
+["Gimlet Labs","AI-powered video analytics and computer vision platform","AI / ML","$80M","Series A","Mar 23, 2026"],
+["Dash0","OpenTelemetry-native observability and monitoring platform","Dev Tools","$110M","Series B","Mar 23, 2026"],
+["Cloaked","Privacy protection and identity masking for consumers","Security","$375M","Series B","Mar 19, 2026"],
+["Latent Health","AI-powered population health management platform","Health","$80M","Series A","Mar 19, 2026"],
+["Posh","Conversational AI for banking and credit unions","FinTech","$37M","Series B","Mar 19, 2026"],
+["Edra","AI-native database for unstructured and multimodal data","Data","$30M","Series A","Mar 18, 2026"],
+["Paraform","Recruiter marketplace connecting startups with top talent","HR / Recruiting","$40M","Series B","Mar 18, 2026"],
+["Tracebit","Deceptive security and honeypot platform for threat detection","Security","$20M","Series A","Mar 17, 2026"],
+["Conduit Health","Nurse triage and care coordination platform","Health","$17M","Series A","Mar 17, 2026"],
+["Axiom (Math)","AI reasoning engine for mathematical problem solving","AI / ML","$200M","Series A","Mar 13, 2026"],
+["Sunday","AI-powered home improvement and renovation platform","Consumer","$165M","Series B","Mar 12, 2026"],
+["Wonderful","AI-powered fertility and reproductive health platform","Health","$150M","Series B","Mar 12, 2026"],
+["Qdrant","Open-source vector database for AI applications","Data","$50M","Series B","Mar 12, 2026"],
+["Gumloop","No-code AI workflow automation platform","AI / ML","$50M","Series B","Mar 12, 2026"],
+["Replit","Browser-based collaborative coding and app deployment","Dev Tools","$400M","Series D","Mar 11, 2026"],
+["AgentMail","AI email agent for inbox automation and drafting","AI / ML","$6M","Seed","Mar 10, 2026"],
+["Depot","Faster CI/CD build infrastructure and remote caching","Dev Tools","$10M","Series A","Mar 10, 2026"],
+["Amigo","AI-powered legal assistant for small businesses","Legal","$11M","Series A","Mar 10, 2026"],
+["Juicebox","AI-powered people search and talent intelligence platform","HR / Recruiting","$80M","Series B","Mar 10, 2026"],
+["Sandbar","AI compliance and fraud detection for financial platforms","Security","$23M","Series A","Mar 10, 2026"],
+["Legora","AI legal research and document drafting platform","Legal","$550M","Series D","Mar 10, 2026"],
+["AMI Labs","General-purpose AI model research and development","AI / ML","$1.03B","Seed","Mar 10, 2026"],
+["Evervault","Data encryption and privacy infrastructure for developers","Security","$25M","Series B","Mar 5, 2026"],
+["Nominal","AI-powered test data management for hardware engineering","AI / ML","$80M","Series B","Mar 5, 2026"],
+["Vast","AI infrastructure and supercomputer cloud platform","Infrastructure","$500M","Series A","Mar 5, 2026"],
+["Lio","AI-powered operations and field service management","AI / ML","$30M","Series A","Mar 5, 2026"],
+["Science","AI drug discovery and biotech research platform","Biotech","$230M","Series C","Mar 5, 2026"],
+["Rodeo","Freelancer invoicing and project management tool","Consumer","$8.5M","Seed","Mar 3, 2026"],
+["ARQ","AI security operations and threat detection platform","Security","$70M","Series B","Mar 3, 2026"],
+["Ease","AI-powered benefits administration for SMBs","HR / Recruiting","$41M","Series A","Mar 2, 2026"],
+["WorkOS","Enterprise SSO, SCIM, and authentication APIs for SaaS apps","Dev Tools","$100M","Series C","Mar 2, 2026"],
+["Encord","AI training data annotation and management platform","Data","$60M","Series C","Feb 27, 2026"],
+["Rowspace","AI-native collaborative workspace for knowledge teams","AI / ML","$50M","Seed","Feb 25, 2026"],
+["NationGraph","Geopolitical risk intelligence and global data platform","Data","$18M","Series A","Feb 25, 2026"],
+["Basis","AI-powered accounting automation for finance teams","FinTech","$100M","Series B","Feb 24, 2026"],
+["Profound","AI-powered answer engine optimization for brands","AI / ML","$96M","Series C","Feb 24, 2026"],
+["Jump AI","AI process automation for back-office operations","AI / ML","$80M","Series B","Feb 19, 2026"],
+["Stacks","Blockchain layer for Bitcoin smart contracts","Crypto / Web3","$23M","Series A","Feb 19, 2026"],
+["World Labs","Spatial intelligence and 3D world generation AI","AI / ML","$1B","Series A","Feb 18, 2026"],
+["Braintrust","AI model evaluation and data labeling platform","AI / ML","$80M","Series B","Feb 18, 2026"],
+["Cogent","AI supply chain optimization and demand forecasting","AI / ML","$42M","Series A","Feb 18, 2026"],
+["Render","Cloud hosting and infrastructure platform for developers","Infrastructure","$100M","Series C","Feb 17, 2026"],
+["Didero","AI-powered procurement and supply chain management","AI / ML","$30M","Series A","Feb 12, 2026"],
+["Anterior","AI clinical documentation and prior authorization for healthcare","Health","$40M","Series B","Feb 12, 2026"],
+["Simile","AI-powered data and knowledge management platform","AI / ML","$100M","Series A","Feb 12, 2026"],
+["Hades Mining","Deep-sea critical mineral extraction technology","Climate / Energy","$18M","Seed","Feb 11, 2026"],
+["Monaco","AI-powered tax and accounting automation","FinTech","$25M","Series A","Feb 11, 2026"],
+["Loyal","AI-driven longevity medicine and lifespan extension research","Biotech","$100M","Series C","Feb 11, 2026"],
+["Bretton AI","AI-powered compliance and regulatory risk management","Security","$75M","Series B","Feb 10, 2026"],
+["Vega","AI-powered security operations and threat intelligence","Security","$125M","Series B","Feb 10, 2026"],
+["Adora","AI-powered childcare management platform","Consumer","$10M","Seed","Feb 10, 2026"],
+["Entire","AI agents for enterprise business process automation","AI / ML","$60M","Seed","Feb 10, 2026"],
+["Oxide Computer Company","Cloud computing hardware for on-premises data centers","Compute / Hardware","$200M","Series C","Feb 10, 2026"],
+["Daytona","Secure cloud development environments for enterprises","Dev Tools","$24M","Series A","Feb 6, 2026"],
+["Accrual","AI-powered revenue recognition and accounting automation","FinTech","$75M","Series A","Feb 6, 2026"],
+["Goodfire","AI interpretability and model transparency research","AI / ML","$150M","Series B","Feb 5, 2026"],
+["Osmo","Digital-physical toy and learning experiences for children","Consumer","$70M","Series B","Feb 4, 2026"],
+["TRM Labs","Blockchain intelligence and crypto compliance platform","Crypto / Web3","$70M","Series C","Feb 4, 2026"],
+["Duna","AI-powered legal entity and corporate governance management","Legal","$35M","Series A","Feb 4, 2026"],
+["Adaption","AI-powered IT operations and infrastructure management","Infrastructure","$50M","Seed","Feb 4, 2026"],
+["Resolve AI","AI-powered incident response and on-call automation","Dev Tools","$125M","Series A","Feb 4, 2026"],
+["Bedrock Robotics","Autonomous construction equipment and earth-moving robotics","Robotics","$270M","Series B","Feb 4, 2026"],
+["ElevenLabs","AI voice synthesis and audio content creation platform","AI / ML","$500M","Series D","Feb 4, 2026"],
+["Positron","Advanced positron emission tomography for medical imaging","Health","$230M","Series B","Feb 4, 2026"],
+["Lotus Health","AI-powered behavioral health and mental wellness platform","Health","$35M","Series A","Feb 3, 2026"],
+["Kindred","Social gifting and wish list platform","Consumer","$125M","Series B","Feb 3, 2026"],
+["Day","AI-powered daily planning and productivity app","Consumer","$20M","Series A","Feb 2, 2026"],
+["RobCo","Modular industrial robotics platform for manufacturing","Robotics","$100M","Series C","Jan 29, 2026"],
+["Matic","Autonomous floor cleaning robots for commercial spaces","Robotics","$60M","Venture","Jan 29, 2026"],
+["Mantis Biotech","RNA-based crop protection and agricultural biotech","Biotech","$6.3M","Seed","Jan 29, 2026"],
+["Upwind","Cloud security posture and runtime protection platform","Security","$250M","Series B","Jan 29, 2026"],
+["Decagon","AI customer support agents for enterprise SaaS","AI / ML","$250M","Series D","Jan 29, 2026"],
+["Flapping Airplanes","Stealth AI research and model development","AI / ML","$180M","Seed","Jan 28, 2026"],
+["Outtake","AI-powered creative production and content operations","AI / ML","$40M","Series B","Jan 28, 2026"],
+["Rogo","AI-powered financial research and analyst automation","FinTech","$75M","Series C","Jan 28, 2026"],
+["FLORA","AI-powered retail merchandising and inventory optimization","AI / ML","$42M","Series A","Jan 27, 2026"],
+["Pace","Revenue management software for hotels and hospitality","Consumer","$10M","Seed","Jan 27, 2026"],
+["Phia","AI benefits navigator for employee healthcare decisions","Health","$35M","Series A","Jan 27, 2026"],
+["Northwood","AI-powered real estate investment and analytics platform","FinTech","$100M","Series B","Jan 27, 2026"],
+["Cambio","AI-powered climate and sustainability risk management","Climate / Energy","$18M","Series A","Jan 26, 2026"],
+["Ricursive Intelligence","Autonomous AI research and self-improving model systems","AI / ML","$300M","Series A","Jan 26, 2026"],
+["Synthesia","AI video generation with realistic digital avatars","AI / ML","$200M","Series E","Jan 26, 2026"],
+["Mine","Data privacy and consumer rights management platform","Security","$14.4M","Series A","Jan 26, 2026"],
+["Inferact","AI inference optimization and serving infrastructure","Infrastructure","$150M","Seed","Jan 23, 2026"],
+["Baseten","ML model deployment and inference serving platform","Infrastructure","$300M","Venture","Jan 22, 2026"],
+["LiveKit","Open-source real-time audio/video and AI agent infrastructure","Infrastructure","$100M","Series C","Jan 22, 2026"],
+["Railway","Developer-friendly cloud app deployment platform","Dev Tools","$100M","Series B","Jan 22, 2026"],
+["Artie","Real-time database replication and streaming platform","Data","$12M","Series A","Jan 22, 2026"],
+["OpenEvidence","AI-powered clinical decision support for physicians","Health","$250M","Series D","Jan 21, 2026"],
+["Stilla","AI-powered wine investment and collection management","Consumer","$5M","Pre-Seed","Jan 20, 2026"],
+["Humans&","AI companion and digital human interaction platform","AI / ML","$480M","Seed","Jan 20, 2026"],
+["Cosmos","AI-powered video search and content intelligence platform","AI / ML","$15M","Series A","Jan 20, 2026"],
+["Ivo","AI contract review and legal document analysis platform","Legal","$55M","Series B","Jan 20, 2026"],
+["Parloa","AI-powered contact center and voice automation platform","AI / ML","$350M","Series D","Jan 16, 2026"],
+["Mytra","Autonomous mobile robot systems for warehouse fulfillment","Robotics","$120M","Series C","Jan 16, 2026"],
+["depthfirst","AI geospatial intelligence for subsurface and energy sectors","Data","$40M","Series A","Jan 14, 2026"],
+["Etched","Transformer-specific AI inference chip manufacturer","Compute / Hardware","$500M","Series B","Jan 14, 2026"],
+["Skild AI","Foundation model for general-purpose robot intelligence","Robotics","$1.4B","Series C","Jan 14, 2026"],
+["Listen Labs","Consumer research and qualitative insights AI platform","AI / ML","$69M","Series B","Jan 14, 2026"],
+["WithCoverage","AI-powered insurance quoting and distribution platform","FinTech","$42M","Series B","Jan 13, 2026"],
+["Deepgram","AI-powered speech recognition and voice intelligence API","AI / ML","$130M","Series C","Jan 13, 2026"],
+["Converge Bio","AI-driven cell therapy and biologic drug development","Biotech","$25M","Series A","Jan 13, 2026"],
+["Torq","AI-powered security automation and SOAR platform","Security","$140M","Series D","Jan 12, 2026"],
+["Rain","AI chip design and neuromorphic computing platform","Compute / Hardware","$250M","Series C","Jan 9, 2026"],
+["Corgi","AI-powered enterprise knowledge and support automation","AI / ML","$108M","Series A","Jan 8, 2026"],
+["Swap","Cross-border e-commerce logistics and fulfillment platform","Consumer","$100M","Series C","Jan 7, 2026"],
+["Autonomous","AI agents for autonomous scientific research","AI / ML","$15M","Pre-Seed","Jan 7, 2026"],
+["Arena","AI-powered live event and sports fan engagement platform","Consumer","$150M","Series A","Jan 6, 2026"],
+["Array Labs","3D synthetic aperture radar satellite imaging platform","Infrastructure","$20M","Series A","Jan 6, 2026"]
+];
+
+const dc={
+  "AI / ML":"d-ai","Dev Tools":"d-dev","FinTech":"d-fintech","Health":"d-health",
+  "Infrastructure":"d-infra","Robotics":"d-robotics","Security":"d-security",
+  "Climate / Energy":"d-climate","Consumer":"d-consumer","Crypto / Web3":"d-crypto",
+  "Data":"d-data","HR / Recruiting":"d-hr","Legal":"d-legal","Biotech":"d-bio",
+  "Compute / Hardware":"d-compute"
+};
+const rc={
+  "Pre-Seed":"r-pre","Seed":"r-seed","Series A":"r-a","Series B":"r-b",
+  "Series C":"r-c","Series D":"r-d","Series E":"r-e","Venture":"r-v"
+};
+
+function render(rows){
+  const tb=document.getElementById("tbody");
+  tb.innerHTML="";
+  rows.forEach(([co,desc,dom,amt,round,date],i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="num">${i+1}</td>
+      <td class="company">${co}</td>
+      <td class="oneliner">${desc}</td>
+      <td><span class="badge ${dc[dom]||''}">${dom}</span></td>
+      <td class="amount">${amt}</td>
+      <td><span class="round-badge ${rc[round]||''}">${round}</span></td>
+      <td class="date">${date}</td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById("cnt").textContent=rows.length+" companies";
+}
+
+function filter(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const d=document.getElementById("domainSel").value;
+  const r=document.getElementById("roundSel").value;
+  render(D.filter(([co,desc,dom,,round])=>{
+    return (!q||co.toLowerCase().includes(q)||desc.toLowerCase().includes(q)||dom.toLowerCase().includes(q))
+      &&(!d||dom===d)&&(!r||round===r);
+  }));
+}
+
+render(D);
+</script>
+</div>
+</body>
+</html>
