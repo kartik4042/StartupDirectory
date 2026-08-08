@@ -1,4 +1,4 @@
-## [2026 Startup Funding Directory](https://kartik4042.github.io/StartupDirectory/)
+## [2026 Startup Funding Directory](https://kartik4042.github.io/StartupDirectory/index.html)
 
 A single-file HTML table of **210 early-stage startups** funded between January and August 2026.
 
